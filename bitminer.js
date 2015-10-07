@@ -1,3 +1,12 @@
+function ResourceManager(){
+    
+}
+
+function TileManager() {
+    
+}
+
+
 //Base Game Class.  Call Init, Render, and Update as needed.  
 var Game = {
     stopMain: null,
