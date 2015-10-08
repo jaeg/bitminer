@@ -78,13 +78,13 @@ var TileManager = {
             var cameraY = canvas.height/2 - this.currentCamera.screenOffset.y  ;
 
             //Get min and max tiles.
-            var cameraMinX = Math.ceil((cameraX - canvas.width/2)/this.tileSize);
-            var cameraMaxX = Math.ceil((cameraX + canvas.width/2)/this.tileSize);
-            var cameraMinY = Math.ceil((cameraY - canvas.height/2)/this.tileSize);
-            var cameraMaxY = Math.ceil((cameraY + canvas.height/2)/this.tileSize);
-            for (var y = cameraMinY; y < cameraMaxY; y++)
+            var cameraMinX = Math.floor((cameraX - canvas.width/2 )/this.tileSize);
+            var cameraMaxX = Math.floor((cameraX + canvas.width/2 )/this.tileSize);
+            var cameraMinY = Math.floor((cameraY - canvas.height/2)/this.tileSize);
+            var cameraMaxY = Math.floor((cameraY + canvas.height/2 )/this.tileSize);
+            for (var y = cameraMinY; y <= cameraMaxY; y++)
             {
-                for (var x = cameraMinX; x < cameraMaxX; x++)
+                for (var x = cameraMinX; x <= cameraMaxX; x++)
                 {
                     if (!this.tiles[y]) this.tiles[y] = []
                     var tile = this.tiles[y][x];
@@ -203,6 +203,7 @@ var Game = {
     tickLength: 30,
     init: function()
     {
+        //Image sources for the game
 		var sources = {
 			tiles: "images/spritesheet_tiles.png",
 			characters: "images/spritesheet_characters.png",
@@ -210,11 +211,11 @@ var Game = {
 			particles: "images/spritesheet_particles.png"
 		}
 		ResourceManager.loadResources(sources);
-        console.log("Init");
         
-        for (var x = 0; x<100; x++)
+        //Randomly create a world
+        for (var x = 0; x<1000; x++)
         {
-            for (var y = 0; y<100; y++)
+            for (var y = 0; y<1000; y++)
             {
                 var tile = new Tile(Math.ceil(Math.random()*2));   
                 TileManager.addTile(x,y,tile);
@@ -229,12 +230,10 @@ var Game = {
         ctx.clearRect(0,0,640,480);
         TileManager.draw();
         player.draw();
-        //console.log("Render");
     },
     update: function(){
         player.update();
         TileManager.update();
-        //console.log("Update");
     }
  
     
