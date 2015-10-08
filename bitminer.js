@@ -66,7 +66,7 @@ var ResourceManager = {
 }
 
 var TileManager = {
-    tileSize: 32,
+    tileSize: 16,
     currentCamera: null,
     tiles: [[]],
     update: function(){},
@@ -90,7 +90,7 @@ var TileManager = {
                     var tile = this.tiles[y][x];
                     if (tile != null)
                     {
-                        tile.draw((x*32) + this.currentCamera.screenOffset.x, (y*32)+this.currentCamera.screenOffset.y);
+                        tile.draw((x*this.tileSize) + this.currentCamera.screenOffset.x, (y*this.tileSize)+this.currentCamera.screenOffset.y);
                     }
                 }
 
@@ -114,9 +114,9 @@ function Tile(type){
         var spriteSheet = ResourceManager.getResource("tiles");
         switch (type)
         {
-            case 1:ctx.drawImage(spriteSheet,650,0,128,128,screenX,screenY,32,32);break;
-            case 2:ctx.drawImage(spriteSheet,650,130,128,128,screenX,screenY,32,32);break;
-            case 3:ctx.drawImage(spriteSheet,256,650,128,128,screenX,screenY,32,32);break;
+            case 1:ctx.drawImage(spriteSheet,650,0,128,128,screenX,screenY,TileManager.tileSize,TileManager.tileSize);break;
+            case 2:ctx.drawImage(spriteSheet,650,130,128,128,screenX,screenY,TileManager.tileSize,TileManager.tileSize);break;
+            case 3:ctx.drawImage(spriteSheet,256,650,128,128,screenX,screenY,TileManager.tileSize,TileManager.tileSize);break;
         }
     }
     
@@ -125,11 +125,13 @@ function Tile(type){
     }
 }
 
+//http://gamedevelopment.tutsplus.com/tutorials/generate-random-cave-levels-using-cellular-automata--gamedev-9664
 WorldBuilder = {
-    dirtDepth: 10,
-    stoneDepth: 10,
+    dirtDepth: 100,
+    stoneDepth: 100,
+    chanceToStartAlive: .60,
     generate: function(width, height){
-        var startY = 0;
+        var startY = 6;
         for (var x = 0; x < width; x++)
         {
             currentY = startY + 1;
@@ -139,18 +141,83 @@ WorldBuilder = {
             //Dirt Section
             while (currentY < startY+this.dirtDepth)
             {
-                TileManager.addTile(x,currentY,new Tile(2));
+                if (Math.random() < this.chanceToStartAlive)
+                {
+                    TileManager.addTile(x,currentY,new Tile(2));
+                }
                 currentY++;
             }
 
             //Stone Section
             while (currentY < startY+this.dirtDepth+this.stoneDepth)
             {
-                TileManager.addTile(x,currentY,new Tile(3));
+                if (Math.random() < this.chanceToStartAlive)
+                {
+                    TileManager.addTile(x,currentY,new Tile(3));
+                }
                 currentY++;
             }
 
-            startY += Math.ceil((Math.random()*10 - 5));
+           // startY += Math.ceil((Math.random()*2 - 2));
+        }
+
+        for (var i = 0; i < 100; i++)
+        {
+          this.automaStep();
+        }
+    },
+
+    countNeighbors: function(x,y){
+        var count = 0;
+        for (var i = -1; i <2; i++)
+        {
+            for (var j = -1; j<2; j++)
+            {
+                var neighbour_x = x+i;
+                var neighbour_y = y+j;
+                if (!TileManager.tiles[neighbour_y]) TileManager.tiles[neighbour_y] = []
+                if (i == 0 && j ==0)
+                {
+
+                }
+                else if(neighbour_x < 0 || neighbour_y < 0 || neighbour_y >= TileManager.tiles.length || neighbour_x >= TileManager.tiles[y].length)
+                {
+                    count++;
+                }
+                else if(TileManager.tiles[neighbour_y][neighbour_x] != undefined){
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    },
+
+    automaStep: function(){
+        deathLimit = 4;
+        birthLimit = 5;
+        for (var y = 0; y < TileManager.tiles.length; y++)
+        {
+            if (!TileManager.tiles[y]) TileManager.tiles[y] = []
+            for (var x = 0; x < TileManager.tiles[y].length; x++)
+            {
+                var neighbourCount = this.countNeighbors(x,y);
+                if (TileManager.tiles[y][x] != undefined)
+                {
+                    if (neighbourCount < deathLimit)
+                    {
+                        TileManager.tiles[y][x] = undefined;
+                    }
+                }
+                else
+                {
+
+                    if (neighbourCount > birthLimit)
+                    {
+                        TileManager.addTile(x,y,new Tile(2));
+                    }
+                }
+            }
         }
     }
 }
@@ -165,7 +232,6 @@ function Camera(following, moveSpeed){
         if (this.following.x + this.screenOffset.x + TileManager.tileSize > canvas.width)
         {
             this.screenOffset.x -= this.moveSpeed;
-            console.log(this.screenOffset.x);
         }
         if (this.following.x + this.screenOffset.x < 0)
             this.screenOffset.x += this.moveSpeed;
@@ -181,7 +247,7 @@ var player = {
     y: 0,
     camera: '',
     init: function(){
-        this.camera = new Camera(this,10);
+        this.camera = new Camera(this,20);
         window.addEventListener('keydown', function(event) {
           switch (event.keyCode) {
             case 37: // Left
@@ -211,16 +277,16 @@ var player = {
         ctx.drawImage(spriteSheet,0,0,128,128,this.x + this.camera.screenOffset.x,this.y+this.camera.screenOffset.y,32,32);
     },
     moveLeft: function(){
-        this.x -= 5;
+        this.x -= 10;
     },
     moveRight: function(){
-        this.x +=5;
+        this.x +=10;
     },
     moveUp: function(){
-        this.y -= 5;
+        this.y -= 10;
     },
     moveDown: function(){
-        this.y += 5;
+        this.y += 10;
     }
 
 }
@@ -261,7 +327,7 @@ var Game = {
         TileManager.setCamera(player.camera);
     },
     render: function(tFrame){
-        ctx.clearRect(0,0,640,480);
+        ctx.clearRect(0,0,canvas.width,canvas.height);
         TileManager.draw();
         player.draw();
     },
