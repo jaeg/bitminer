@@ -1,3 +1,6 @@
+canvas = document.getElementById('tilesCanvas');
+ctx = canvas.getContext('2d');
+
 /*The resource manager controls the loading of game resources.  loadResources has optional callback and errorCallback functions to inform the rest of the program when
 loading is complete.
 Example sources object:
@@ -60,8 +63,66 @@ var ResourceManager = {
 	}
 }
 
-function TileManager() {
+var TileManager = {
+    currentCamera: null,
+    tiles: [[]],
+    update: function(){},
+    draw: function(){
+        if (this.currentCamera != null)
+        {
+            var startx =  Math.floor((this.currentCamera.x - 640 / 2)/32)
+            var endx = Math.floor((this.currentCamera.x + Math.ceil(640 / 2))/32)
+            var starty = Math.floor((this.currentCamera.y - 480 / 2)/32)
+            var endy = Math.floor((this.currentCamera.y + Math.ceil(480 / 2))/32)
+            
+            for (var x = startx; x < endx; x ++)
+            {
+                
+                for (var y = starty; y < endy; y ++)
+                {
+                    if (!this.tiles[y]) this.tiles[y] = []
+                    var tile = this.tiles[y][x];
+                    if (tile != null)
+                    {
+                        
+                        tile.draw((x-this.currentCamera.x)*32, (y-this.currentCamera.y)*32);
+                    }
+
+                }
+            }
+        }
+    },
+    setCamera: function(camera){
+        this.currentCamera = camera;   
+    },
+    addTile: function(x,y,tile){
+        if (!this.tiles[y]) this.tiles[y] = []
+        this.tiles[y][x] = tile;
+    }
+}
+
+function Tile(type){
+    this.hp = 100;
+    this.type = type;
     
+    this.draw = function(screenX,screenY){
+        var spriteSheet = ResourceManager.getResource("tiles");
+        ctx.drawImage(spriteSheet,650,130,128,128,screenX,screenY,32,32);
+    }
+    
+    this.update = function(){
+        
+    }
+}
+
+var player = {
+    x: 0,
+    y: 0,
+    draw: function()
+    {
+        var spriteSheet = ResourceManager.getResource("tiles");
+        ctx.drawImage(spriteSheet,0,0,128,128,this.x,this.y,32,32);
+    }
 }
 
 
@@ -81,11 +142,25 @@ var Game = {
 		}
 		ResourceManager.loadResources(sources);
         console.log("Init");
+        
+        for (var x = 0; x<100; x++)
+        {
+            for (var y = 0; y<100; y++)
+            {
+                var tile = new Tile(1);   
+                TileManager.addTile(x,y,tile);
+            }
+        }
+        TileManager.setCamera(player);
     },
     render: function(tFrame){
+        ctx.clearRect(0,0,640,480);
+        TileManager.draw();
+        player.draw();
         //console.log("Render");
     },
     update: function(){
+        TileManager.update();
         //console.log("Update");
     }
  
