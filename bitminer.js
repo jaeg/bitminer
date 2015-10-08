@@ -141,7 +141,7 @@ WorldBuilder = {
             //Dirt Section
             while (currentY < startY+this.dirtDepth)
             {
-                if (Math.random() < this.chanceToStartAlive)
+                if (Math.random() < this.chanceToStartAlive + .20)
                 {
                     TileManager.addTile(x,currentY,new Tile(2));
                 }
