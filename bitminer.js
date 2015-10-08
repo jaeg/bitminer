@@ -1,6 +1,8 @@
 canvas = document.getElementById('tilesCanvas');
 ctx = canvas.getContext('2d');
 
+
+
 /*The resource manager controls the loading of game resources.  loadResources has optional callback and errorCallback functions to inform the rest of the program when
 loading is complete.
 Example sources object:
@@ -64,31 +66,34 @@ var ResourceManager = {
 }
 
 var TileManager = {
+    tileSize: 32,
     currentCamera: null,
     tiles: [[]],
     update: function(){},
     draw: function(){
         if (this.currentCamera != null)
         {
-            var startx =  Math.floor((this.currentCamera.x - 640 / 2)/32)
-            var endx = Math.floor((this.currentCamera.x + Math.ceil(640 / 2))/32)
-            var starty = Math.floor((this.currentCamera.y - 480 / 2)/32)
-            var endy = Math.floor((this.currentCamera.y + Math.ceil(480 / 2))/32)
-            
-            for (var x = startx; x < endx; x ++)
+            //Drawing is based off screen offset so get a point near the center for a "camera"
+            var cameraX = canvas.width/2 - this.currentCamera.screenOffset.x;
+            var cameraY = canvas.height/2 - this.currentCamera.screenOffset.y  ;
+
+            //Get min and max tiles.
+            var cameraMinX = Math.ceil((cameraX - canvas.width/2)/this.tileSize);
+            var cameraMaxX = Math.ceil((cameraX + canvas.width/2)/this.tileSize);
+            var cameraMinY = Math.ceil((cameraY - canvas.height/2)/this.tileSize);
+            var cameraMaxY = Math.ceil((cameraY + canvas.height/2)/this.tileSize);
+            for (var y = cameraMinY; y < cameraMaxY; y++)
             {
-                
-                for (var y = starty; y < endy; y ++)
+                for (var x = cameraMinX; x < cameraMaxX; x++)
                 {
                     if (!this.tiles[y]) this.tiles[y] = []
                     var tile = this.tiles[y][x];
                     if (tile != null)
                     {
-                        
-                        tile.draw((x-this.currentCamera.x)*32, (y-this.currentCamera.y)*32);
+                        tile.draw((x*32) + this.currentCamera.screenOffset.x, (y*32)+this.currentCamera.screenOffset.y);
                     }
-
                 }
+
             }
         }
     },
@@ -107,7 +112,11 @@ function Tile(type){
     
     this.draw = function(screenX,screenY){
         var spriteSheet = ResourceManager.getResource("tiles");
-        ctx.drawImage(spriteSheet,650,130,128,128,screenX,screenY,32,32);
+        switch (type)
+        {
+            case 1:ctx.drawImage(spriteSheet,650,130,128,128,screenX,screenY,32,32);break;
+            case 2:ctx.drawImage(spriteSheet,522,130,128,128,screenX,screenY,32,32);break;
+        }
     }
     
     this.update = function(){
@@ -115,14 +124,74 @@ function Tile(type){
     }
 }
 
+function Camera(following, moveSpeed){
+    this.following = following || null;
+    this.moveSpeed = moveSpeed || 3;
+    this.screenOffset = {x:0, y:0};
+    this.update = function()
+    {
+        //Screen move
+        if (this.following.x + this.screenOffset.x + TileManager.tileSize > canvas.width)
+        {
+            this.screenOffset.x -= this.moveSpeed;
+            console.log(this.screenOffset.x);
+        }
+        if (this.following.x + this.screenOffset.x < 0)
+            this.screenOffset.x += this.moveSpeed;
+        if (this.following.y + this.screenOffset.y + TileManager.tileSize > canvas.height)
+            this.screenOffset.y -= this.moveSpeed;
+        if (this.following.y + this.screenOffset.y < 0)
+            this.screenOffset.y += this.moveSpeed;
+    }
+}
+
 var player = {
     x: 0,
     y: 0,
+    camera: '',
+    init: function(){
+        this.camera = new Camera(this);
+        window.addEventListener('keydown', function(event) {
+          switch (event.keyCode) {
+            case 37: // Left
+              player.moveLeft();
+            break;
+
+            case 38: // Up
+              player.moveUp();
+            break;
+
+            case 39: // Right
+              player.moveRight();
+            break;
+
+            case 40: // Down
+              player.moveDown();
+            break;
+            }
+        }, false);
+    },
+    update: function(){
+        this.camera.update();
+    },
     draw: function()
     {
         var spriteSheet = ResourceManager.getResource("tiles");
-        ctx.drawImage(spriteSheet,0,0,128,128,this.x,this.y,32,32);
+        ctx.drawImage(spriteSheet,0,0,128,128,this.x + this.camera.screenOffset.x,this.y+this.camera.screenOffset.y,32,32);
+    },
+    moveLeft: function(){
+        this.x -= 3;
+    },
+    moveRight: function(){
+        this.x +=3;
+    },
+    moveUp: function(){
+        this.y -= 3;
+    },
+    moveDown: function(){
+        this.y += 3;
     }
+
 }
 
 
@@ -147,11 +216,14 @@ var Game = {
         {
             for (var y = 0; y<100; y++)
             {
-                var tile = new Tile(1);   
+                var tile = new Tile(Math.ceil(Math.random()*2));   
                 TileManager.addTile(x,y,tile);
             }
         }
-        TileManager.setCamera(player);
+        
+
+        player.init();
+        TileManager.setCamera(player.camera);
     },
     render: function(tFrame){
         ctx.clearRect(0,0,640,480);
@@ -160,6 +232,7 @@ var Game = {
         //console.log("Render");
     },
     update: function(){
+        player.update();
         TileManager.update();
         //console.log("Update");
     }
