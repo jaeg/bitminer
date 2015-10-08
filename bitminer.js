@@ -229,22 +229,22 @@ function Camera(following, moveSpeed){
     this.update = function()
     {
         //Screen move
-        if (this.following.x + this.screenOffset.x + TileManager.tileSize > canvas.width)
+        if (this.following.x*TileManager.tileSize + this.screenOffset.x + TileManager.tileSize > canvas.width)
         {
             this.screenOffset.x -= this.moveSpeed;
         }
-        if (this.following.x + this.screenOffset.x < 0)
+        if (this.following.x*TileManager.tileSize + this.screenOffset.x < 0)
             this.screenOffset.x += this.moveSpeed;
-        if (this.following.y + this.screenOffset.y + TileManager.tileSize > canvas.height)
+        if (this.following.y*TileManager.tileSize + this.screenOffset.y + TileManager.tileSize > canvas.height)
             this.screenOffset.y -= this.moveSpeed;
-        if (this.following.y + this.screenOffset.y < 0)
+        if (this.following.y*TileManager.tileSize + this.screenOffset.y < 0)
             this.screenOffset.y += this.moveSpeed;
     }
 }
 
 var player = {
     x: 0,
-    y: 100*TileManager.tileSize, //Player x is in screen coords not array coords..
+    y: 100, //Player x is in screen coords not array coords..
     camera: '',
     init: function(){
         this.camera = new Camera(this,20);
@@ -274,19 +274,19 @@ var player = {
     draw: function()
     {
         var spriteSheet = ResourceManager.getResource("tiles");
-        ctx.drawImage(spriteSheet,0,0,128,128,this.x + this.camera.screenOffset.x,this.y+this.camera.screenOffset.y,32,32);
+        ctx.drawImage(spriteSheet,0,0,128,128,(this.x* TileManager.tileSize) + this.camera.screenOffset.x,(this.y* TileManager.tileSize)+this.camera.screenOffset.y,32,32);
     },
     moveLeft: function(){
-        this.x -= 10;
+        this.x -= .5;
     },
     moveRight: function(){
-        this.x +=10;
+        this.x +=.5;
     },
     moveUp: function(){
-        this.y -= 10;
+        this.y -= .3;
     },
     moveDown: function(){
-        this.y += 10;
+        this.y += .3;
     }
 
 }
