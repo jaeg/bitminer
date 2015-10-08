@@ -114,13 +114,44 @@ function Tile(type){
         var spriteSheet = ResourceManager.getResource("tiles");
         switch (type)
         {
-            case 1:ctx.drawImage(spriteSheet,650,130,128,128,screenX,screenY,32,32);break;
-            case 2:ctx.drawImage(spriteSheet,522,130,128,128,screenX,screenY,32,32);break;
+            case 1:ctx.drawImage(spriteSheet,650,0,128,128,screenX,screenY,32,32);break;
+            case 2:ctx.drawImage(spriteSheet,650,130,128,128,screenX,screenY,32,32);break;
+            case 3:ctx.drawImage(spriteSheet,256,650,128,128,screenX,screenY,32,32);break;
         }
     }
     
     this.update = function(){
         
+    }
+}
+
+WorldBuilder = {
+    dirtDepth: 10,
+    stoneDepth: 10,
+    generate: function(width, height){
+        var startY = 0;
+        for (var x = 0; x < width; x++)
+        {
+            currentY = startY + 1;
+            //Grass section
+            TileManager.addTile(x,startY,new Tile(1));
+
+            //Dirt Section
+            while (currentY < startY+this.dirtDepth)
+            {
+                TileManager.addTile(x,currentY,new Tile(2));
+                currentY++;
+            }
+
+            //Stone Section
+            while (currentY < startY+this.dirtDepth+this.stoneDepth)
+            {
+                TileManager.addTile(x,currentY,new Tile(3));
+                currentY++;
+            }
+
+            startY += Math.ceil((Math.random()*10 - 5));
+        }
     }
 }
 
@@ -150,7 +181,7 @@ var player = {
     y: 0,
     camera: '',
     init: function(){
-        this.camera = new Camera(this);
+        this.camera = new Camera(this,10);
         window.addEventListener('keydown', function(event) {
           switch (event.keyCode) {
             case 37: // Left
@@ -180,16 +211,16 @@ var player = {
         ctx.drawImage(spriteSheet,0,0,128,128,this.x + this.camera.screenOffset.x,this.y+this.camera.screenOffset.y,32,32);
     },
     moveLeft: function(){
-        this.x -= 3;
+        this.x -= 5;
     },
     moveRight: function(){
-        this.x +=3;
+        this.x +=5;
     },
     moveUp: function(){
-        this.y -= 3;
+        this.y -= 5;
     },
     moveDown: function(){
-        this.y += 3;
+        this.y += 5;
     }
 
 }
@@ -213,6 +244,9 @@ var Game = {
 		ResourceManager.loadResources(sources);
         
         //Randomly create a world
+        console.log("create world");
+        WorldBuilder.generate(1000,10);
+        /*
         for (var x = 0; x<1000; x++)
         {
             for (var y = 0; y<1000; y++)
@@ -220,7 +254,7 @@ var Game = {
                 var tile = new Tile(Math.ceil(Math.random()*2));   
                 TileManager.addTile(x,y,tile);
             }
-        }
+        }*/
         
 
         player.init();
