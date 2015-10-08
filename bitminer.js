@@ -66,7 +66,7 @@ var ResourceManager = {
 }
 
 var TileManager = {
-    tileSize: 16,
+    tileSize: 32,
     currentCamera: null,
     tiles: [[]],
     update: function(){},
@@ -103,7 +103,14 @@ var TileManager = {
     addTile: function(x,y,tile){
         if (!this.tiles[y]) this.tiles[y] = []
         this.tiles[y][x] = tile;
-    }
+    },
+    removeTile: function(x,y){
+        this.tiles[y][x] = undefined;
+    },
+    moveTile: function(x1,y1,x2,y2){
+      this.addTile(x2,y2,this.tiles[y1,x1]);
+      this.removeTile(x1,y1);
+    },
 }
 
 function Tile(type){
@@ -206,7 +213,7 @@ WorldBuilder = {
                 {
                     if (neighbourCount < deathLimit)
                     {
-                        TileManager.tiles[y][x] = undefined;
+                        TileManager.removeTile(x,y);
                     }
                 }
                 else
@@ -297,7 +304,7 @@ var Game = {
     stopMain: null,
     lastRender: 0,
     lastTick: 0,
-    tickLength: 30,
+    tickLength: 10,
     init: function()
     {
         //Image sources for the game
