@@ -131,7 +131,7 @@ WorldBuilder = {
     stoneDepth: 100,
     chanceToStartAlive: .60,
     generate: function(width, height){
-        var startY = 6;
+        var startY = 100;
         for (var x = 0; x < width; x++)
         {
             currentY = startY + 1;
@@ -158,7 +158,7 @@ WorldBuilder = {
                 currentY++;
             }
 
-           // startY += Math.ceil((Math.random()*2 - 2));
+            startY += Math.ceil((Math.random()*2 - 1));
         }
 
         for (var i = 0; i < 100; i++)
@@ -244,7 +244,7 @@ function Camera(following, moveSpeed){
 
 var player = {
     x: 0,
-    y: 0,
+    y: 100*TileManager.tileSize, //Player x is in screen coords not array coords..
     camera: '',
     init: function(){
         this.camera = new Camera(this,20);
