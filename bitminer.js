@@ -69,12 +69,13 @@ ResourceManager.prototype.getResource = function(resourceName){
 
 resourceManager = new ResourceManager();    
     
-var TileManager = {
-    tileSize: 32,
-    currentCamera: null,
-    tiles: [[]],
-    update: function(){},
-    draw: function(){
+var TileManager = function(){
+    this.tileSize = 32;
+    this.currentCamera = null;
+    this.tiles = [[]];
+}
+    TileManager.prototype.update= function(){};
+    TileManager.prototype.draw= function(){
         if (this.currentCamera != null)
         {
             //Drawing is based off screen offset so get a point near the center for a "camera"
@@ -100,22 +101,23 @@ var TileManager = {
 
             }
         }
-    },
-    setCamera: function(camera){
+    };
+    TileManager.prototype.setCamera= function(camera){
         this.currentCamera = camera;   
-    },
-    addTile: function(x,y,tile){
+    };
+    TileManager.prototype.addTile= function(x,y,tile){
         if (!this.tiles[y]) this.tiles[y] = []
         this.tiles[y][x] = tile;
-    },
-    removeTile: function(x,y){
+    };
+    TileManager.prototype.removeTile= function(x,y){
         this.tiles[y][x] = undefined;
-    },
-    moveTile: function(x1,y1,x2,y2){
+    };
+    TileManager.prototype.moveTile= function(x1,y1,x2,y2){
       this.addTile(x2,y2,this.tiles[y1,x1]);
       this.removeTile(x1,y1);
-    },
-}
+    };
+
+var tileManager = new TileManager();
 
 function Tile(type){
     this.hp = 100;
@@ -125,9 +127,9 @@ function Tile(type){
         var spriteSheet = resourceManager.getResource("tiles");
         switch (type)
         {
-            case 1:ctx.drawImage(spriteSheet,650,0,128,128,screenX,screenY,TileManager.tileSize,TileManager.tileSize);break;
-            case 2:ctx.drawImage(spriteSheet,650,130,128,128,screenX,screenY,TileManager.tileSize,TileManager.tileSize);break;
-            case 3:ctx.drawImage(spriteSheet,256,650,128,128,screenX,screenY,TileManager.tileSize,TileManager.tileSize);break;
+            case 1:ctx.drawImage(spriteSheet,650,0,128,128,screenX,screenY,tileManager.tileSize,tileManager.tileSize);break;
+            case 2:ctx.drawImage(spriteSheet,650,130,128,128,screenX,screenY,tileManager.tileSize,tileManager.tileSize);break;
+            case 3:ctx.drawImage(spriteSheet,256,650,128,128,screenX,screenY,tileManager.tileSize,tileManager.tileSize);break;
         }
     }
     
@@ -147,14 +149,14 @@ WorldBuilder = {
         {
             currentY = startY + 1;
             //Grass section
-            TileManager.addTile(x,startY,new Tile(1));
+            tileManager.addTile(x,startY,new Tile(1));
 
             //Dirt Section
             while (currentY < startY+this.dirtDepth)
             {
                 if (Math.random() < this.chanceToStartAlive + .20)
                 {
-                    TileManager.addTile(x,currentY,new Tile(2));
+                    tileManager.addTile(x,currentY,new Tile(2));
                 }
                 currentY++;
             }
@@ -164,7 +166,7 @@ WorldBuilder = {
             {
                 if (Math.random() < this.chanceToStartAlive)
                 {
-                    TileManager.addTile(x,currentY,new Tile(3));
+                    tileManager.addTile(x,currentY,new Tile(3));
                 }
                 currentY++;
             }
@@ -174,7 +176,7 @@ WorldBuilder = {
 
         for (var i = 0; i < 100; i++)
         {
-          //this.automaStep();
+          this.automaStep();
         }
     },
 
@@ -186,16 +188,16 @@ WorldBuilder = {
             {
                 var neighbour_x = x+i;
                 var neighbour_y = y+j;
-                if (!TileManager.tiles[neighbour_y]) TileManager.tiles[neighbour_y] = []
+                if (!tileManager.tiles[neighbour_y]) tileManager.tiles[neighbour_y] = []
                 if (i == 0 && j ==0)
                 {
 
                 }
-                else if(neighbour_x < 0 || neighbour_y < 0 || neighbour_y >= TileManager.tiles.length || neighbour_x >= TileManager.tiles[y].length)
+                else if(neighbour_x < 0 || neighbour_y < 0 || neighbour_y >= tileManager.tiles.length || neighbour_x >= tileManager.tiles[y].length)
                 {
                     count++;
                 }
-                else if(TileManager.tiles[neighbour_y][neighbour_x] != undefined){
+                else if(tileManager.tiles[neighbour_y][neighbour_x] != undefined){
                     count++;
                 }
             }
@@ -207,17 +209,17 @@ WorldBuilder = {
     automaStep: function(){
         deathLimit = 4;
         birthLimit = 5;
-        for (var y = 0; y < TileManager.tiles.length; y++)
+        for (var y = 0; y < tileManager.tiles.length; y++)
         {
-            if (!TileManager.tiles[y]) TileManager.tiles[y] = []
-            for (var x = 0; x < TileManager.tiles[y].length; x++)
+            if (!tileManager.tiles[y]) tileManager.tiles[y] = []
+            for (var x = 0; x < tileManager.tiles[y].length; x++)
             {
                 var neighbourCount = this.countNeighbors(x,y);
-                if (TileManager.tiles[y][x] != undefined)
+                if (tileManager.tiles[y][x] != undefined)
                 {
                     if (neighbourCount < deathLimit)
                     {
-                        TileManager.removeTile(x,y);
+                        tileManager.removeTile(x,y);
                     }
                 }
                 else
@@ -225,7 +227,7 @@ WorldBuilder = {
 
                     if (neighbourCount > birthLimit)
                     {
-                        TileManager.addTile(x,y,new Tile(2));
+                        tileManager.addTile(x,y,new Tile(2));
                     }
                 }
             }
@@ -240,15 +242,15 @@ function Camera(following, moveSpeed){
     this.update = function()
     {
         //Screen move
-        if (this.following.x*TileManager.tileSize + this.screenOffset.x + TileManager.tileSize > canvas.width)
+        if (this.following.x*tileManager.tileSize + this.screenOffset.x + tileManager.tileSize > canvas.width)
         {
             this.screenOffset.x -= this.moveSpeed;
         }
-        if (this.following.x*TileManager.tileSize + this.screenOffset.x < 0)
+        if (this.following.x*tileManager.tileSize + this.screenOffset.x < 0)
             this.screenOffset.x += this.moveSpeed;
-        if (this.following.y*TileManager.tileSize + this.screenOffset.y + TileManager.tileSize > canvas.height)
+        if (this.following.y*tileManager.tileSize + this.screenOffset.y + tileManager.tileSize > canvas.height)
             this.screenOffset.y -= this.moveSpeed;
-        if (this.following.y*TileManager.tileSize + this.screenOffset.y < 0)
+        if (this.following.y*tileManager.tileSize + this.screenOffset.y < 0)
             this.screenOffset.y += this.moveSpeed;
     }
 }
@@ -285,7 +287,7 @@ var player = {
     draw: function()
     {
         var spriteSheet = resourceManager.getResource("tiles");
-        ctx.drawImage(spriteSheet,0,0,128,128,(this.x* TileManager.tileSize) + this.camera.screenOffset.x,(this.y* TileManager.tileSize)+this.camera.screenOffset.y,32,32);
+        ctx.drawImage(spriteSheet,0,0,128,128,(this.x* tileManager.tileSize) + this.camera.screenOffset.x,(this.y* tileManager.tileSize)+this.camera.screenOffset.y,32,32);
     },
     moveLeft: function(){
         this.x -= .5;
@@ -329,22 +331,22 @@ var Game = {
             for (var y = 0; y<1000; y++)
             {
                 var tile = new Tile(Math.ceil(Math.random()*2));   
-                TileManager.addTile(x,y,tile);
+                tileManager.addTile(x,y,tile);
             }
         }*/
         
 
         player.init();
-        TileManager.setCamera(player.camera);
+        tileManager.setCamera(player.camera);
     },
     render: function(tFrame){
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        TileManager.draw();
+        tileManager.draw();
         player.draw();
     },
     update: function(){
         player.update();
-        TileManager.update();
+        tileManager.update();
     }
  
     
