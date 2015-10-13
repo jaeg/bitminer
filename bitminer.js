@@ -14,12 +14,14 @@ Example sources object:
 		}
 
 */
-var ResourceManager = {
-    totalResources: 0,
-	failedResources: 0,
-	successfulResources: 0,
-	resources: {},
-	loadResources: function(sources, callback, errorCallback){
+var ResourceManager = function(){
+    this.totalResources = 0;
+	this.failedResources= 0;
+	this.successfulResources = 0;
+	this.resources = {};
+}
+
+ResourceManager.prototype.loadResources = function(sources, callback, errorCallback){
 		var self = this;
 		for (var src in sources)
 		{
@@ -54,8 +56,9 @@ var ResourceManager = {
 			this.resources[src].src = sources[src];
 			
 		}
-	},
-	getResource: function(resourceName){
+}
+
+ResourceManager.prototype.getResource = function(resourceName){
 		if (this.resources[resourceName] != undefined)
 		{
 			return this.resources[resourceName];
@@ -63,8 +66,9 @@ var ResourceManager = {
 		
 		return null;
 	}
-}
 
+resourceManager = new ResourceManager();    
+    
 var TileManager = {
     tileSize: 32,
     currentCamera: null,
@@ -118,7 +122,7 @@ function Tile(type){
     this.type = type;
     
     this.draw = function(screenX,screenY){
-        var spriteSheet = ResourceManager.getResource("tiles");
+        var spriteSheet = resourceManager.getResource("tiles");
         switch (type)
         {
             case 1:ctx.drawImage(spriteSheet,650,0,128,128,screenX,screenY,TileManager.tileSize,TileManager.tileSize);break;
@@ -170,7 +174,7 @@ WorldBuilder = {
 
         for (var i = 0; i < 100; i++)
         {
-          this.automaStep();
+          //this.automaStep();
         }
     },
 
@@ -280,7 +284,7 @@ var player = {
     },
     draw: function()
     {
-        var spriteSheet = ResourceManager.getResource("tiles");
+        var spriteSheet = resourceManager.getResource("tiles");
         ctx.drawImage(spriteSheet,0,0,128,128,(this.x* TileManager.tileSize) + this.camera.screenOffset.x,(this.y* TileManager.tileSize)+this.camera.screenOffset.y,32,32);
     },
     moveLeft: function(){
@@ -314,7 +318,7 @@ var Game = {
 			items: "images/spritesheet_items.png",
 			particles: "images/spritesheet_particles.png"
 		}
-		ResourceManager.loadResources(sources);
+		resourceManager.loadResources(sources);
         
         //Randomly create a world
         console.log("create world");
