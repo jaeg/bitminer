@@ -3,27 +3,37 @@ ctx = canvas.getContext('2d');
 
 //http://nokarma.org/2011/02/27/javascript-game-development-keyboard-input/
 var Key = {
-  _pressed: {},
+    _pressed:
+    {},
 
-  LEFT: 37,
-  UP: 38,
-  RIGHT: 39,
-  DOWN: 40,
-  
-  isDown: function(keyCode) {
-    return this._pressed[keyCode];
-  },
-  
-  onKeydown: function(event) {
-    this._pressed[event.keyCode] = true;
-  },
-  
-  onKeyup: function(event) {
-    delete this._pressed[event.keyCode];
-  }
+    LEFT: 37,
+    UP: 38,
+    RIGHT: 39,
+    DOWN: 40,
+
+    isDown: function(keyCode)
+    {
+        return this._pressed[keyCode];
+    },
+
+    onKeydown: function(event)
+    {
+        this._pressed[event.keyCode] = true;
+    },
+
+    onKeyup: function(event)
+    {
+        delete this._pressed[event.keyCode];
+    }
 };
-window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
-window.addEventListener('keydown', function(event) { Key.onKeydown(event); }, false);
+window.addEventListener('keyup', function(event)
+{
+    Key.onKeyup(event);
+}, false);
+window.addEventListener('keydown', function(event)
+{
+    Key.onKeydown(event);
+}, false);
 
 /*The resource manager controls the loading of game resources.  loadResources has optional callback and errorCallback functions to inform the rest of the program when
 loading is complete.
@@ -151,10 +161,12 @@ TileManager.prototype.moveTile = function(x1, y1, x2, y2)
     this.addTile(x2, y2, this.tiles[y1, x1]);
     this.removeTile(x1, y1);
 };
-TileManager.prototype.tileAt = function(x,y){
+TileManager.prototype.tileAt = function(x, y)
+{
     return tiles[y][x];
 }
-TileManager.prototype.tileIsSolid = function(x,y){
+TileManager.prototype.tileIsSolid = function(x, y)
+{
     if (this.tiles[y][x] == undefined)
     {
         return false;
@@ -329,7 +341,7 @@ var Player = function()
 }
 Player.prototype.init = function()
 {
-    this.camera = new Camera(this, 20); 
+    this.camera = new Camera(this, 20);
 };
 Player.prototype.update = function()
 {
@@ -338,27 +350,31 @@ Player.prototype.update = function()
     if (Key.isDown(Key.LEFT)) this.moveLeft();
     if (Key.isDown(Key.DOWN)) this.moveDown();
     if (Key.isDown(Key.RIGHT)) this.moveRight();
-    
+
     this.x += this.xspeed;
     this.y += this.yspeed;
-    
+
     //http://www.emanueleferonato.com/2014/01/17/creation-of-an-html5-tile-based-platform-game-with-no-engines-behind-pure-code/
     var baseCol = Math.floor(this.x);
     var baseRow = Math.floor(this.y);
-    var rowOverlap = this.y%tileManager.tileSize
-    console.log(!tileManager.tileIsSolid(baseCol,baseRow));
-    if(this.xspeed>0){
-			if((tileManager.tileIsSolid(baseCol+1,baseRow) && !tileManager.tileIsSolid(baseCol,baseRow) || tileManager.tileIsSolid(baseCol+1,baseRow+1) && !tileManager.tileIsSolid(baseCol,baseRow+1))){
-				this.x=baseCol;
-			}	
+    var rowOverlap = this.y % tileManager.tileSize
+    console.log(!tileManager.tileIsSolid(baseCol, baseRow));
+    if (this.xspeed > 0)
+    {
+        if ((tileManager.tileIsSolid(baseCol + 1, baseRow) && !tileManager.tileIsSolid(baseCol, baseRow) || tileManager.tileIsSolid(baseCol + 1, baseRow + 1) && !tileManager.tileIsSolid(baseCol, baseRow + 1)))
+        {
+            this.x = baseCol;
+        }
     }
-    
-    if(this.xspeed<0){
-			if((!tileManager.tileIsSolid(baseCol+1,baseRow) && tileManager.tileIsSolid(baseCol,baseRow) || !tileManager.tileIsSolid(baseCol+1,baseRow+1) && tileManager.tileIsSolid(baseCol,baseRow+1))){
-				this.x=baseCol+1;
-			}	
+
+    if (this.xspeed < 0)
+    {
+        if ((!tileManager.tileIsSolid(baseCol + 1, baseRow) && tileManager.tileIsSolid(baseCol, baseRow) || !tileManager.tileIsSolid(baseCol + 1, baseRow + 1) && tileManager.tileIsSolid(baseCol, baseRow + 1)))
+        {
+            this.x = baseCol + 1;
+        }
     }
-    
+
     this.xspeed = 0;
     this.yspeed = 0;
 };
@@ -419,7 +435,7 @@ var Game = {
         }*/
 
 
-        this.player.init();        
+        this.player.init();
         tileManager.setCamera(this.player.camera);
     },
     render: function(tFrame)
