@@ -295,28 +295,7 @@ var Player = function()
 }
 Player.prototype.init = function()
     {
-        this.camera = new Camera(this, 20);
-        window.addEventListener('keydown', function(event)
-        {
-            switch (event.keyCode)
-            {
-                case 37: // Left
-                    player.moveLeft();
-                    break;
-
-                case 38: // Up
-                    player.moveUp();
-                    break;
-
-                case 39: // Right
-                    player.moveRight();
-                    break;
-
-                case 40: // Down
-                    player.moveDown();
-                    break;
-            }
-        }, false);
+        this.camera = new Camera(this, 20); 
     },
     Player.prototype.update = function()
     {
@@ -343,7 +322,7 @@ Player.prototype.moveDown = function()
 {
     this.y += .3;
 };
-player = new Player();
+
 
 
 //Base Game Class.  Call Init, Render, and Update as needed.  
@@ -352,6 +331,7 @@ var Game = {
     lastRender: 0,
     lastTick: 0,
     tickLength: 10,
+    player: new Player(),
     init: function()
     {
         //Image sources for the game
@@ -378,18 +358,41 @@ var Game = {
         }*/
 
 
-        player.init();
-        tileManager.setCamera(player.camera);
+        this.player.init();
+        self = this;
+        window.addEventListener('keydown', function(event)
+        {
+            switch (event.keyCode)
+            {
+                case 37: // Left
+                    self.player.moveLeft();
+                    break;
+
+                case 38: // Up
+                    self.player.moveUp();
+                    break;
+
+                case 39: // Right
+                    self.player.moveRight();
+                    break;
+
+                case 40: // Down
+                    self.player.moveDown();
+                    break;
+            }
+        }, false);
+        
+        tileManager.setCamera(this.player.camera);
     },
     render: function(tFrame)
     {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         tileManager.draw();
-        player.draw();
+        this.player.draw();
     },
     update: function()
     {
-        player.update();
+        this.player.update();
         tileManager.update();
     }
 
