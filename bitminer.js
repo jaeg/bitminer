@@ -151,6 +151,16 @@ TileManager.prototype.moveTile = function(x1, y1, x2, y2)
     this.addTile(x2, y2, this.tiles[y1, x1]);
     this.removeTile(x1, y1);
 };
+TileManager.prototype.tileAt = function(x,y){
+    return tiles[y][x];
+}
+TileManager.prototype.tileIsSolid = function(x,y){
+    if (this.tiles[y][x] == undefined)
+    {
+        return false;
+    }
+    return this.tiles[y][x].solid;
+}
 
 var tileManager = new TileManager();
 
@@ -158,7 +168,7 @@ function Tile(type)
 {
     this.hp = 100;
     this.type = type;
-
+    this.solid = true;
     this.draw = function(screenX, screenY)
     {
         var spriteSheet = resourceManager.getResource("tiles");
@@ -314,6 +324,8 @@ var Player = function()
     this.x = 0;
     this.y = 100; //Player x is in screen coords not array coords..
     this.camera = '';
+    this.xspeed = 0;
+    this.yspeed = 0;
 }
 Player.prototype.init = function()
 {
@@ -326,6 +338,14 @@ Player.prototype.update = function()
     if (Key.isDown(Key.LEFT)) this.moveLeft();
     if (Key.isDown(Key.DOWN)) this.moveDown();
     if (Key.isDown(Key.RIGHT)) this.moveRight();
+    
+    this.x += this.xspeed;
+    this.y += this.yspeed;
+    
+    
+    
+    this.xspeed = 0;
+    this.yspeed = 0;
 };
 Player.prototype.draw = function()
 {
@@ -334,19 +354,19 @@ Player.prototype.draw = function()
 };
 Player.prototype.moveLeft = function()
 {
-    this.x -= .5;
+    this.xspeed = -.3;
 };
 Player.prototype.moveRight = function()
 {
-    this.x += .5;
+    this.xspeed = .3;
 };
 Player.prototype.moveUp = function()
 {
-    this.y -= .3;
+    this.yspeed = -.3
 };
 Player.prototype.moveDown = function()
 {
-    this.y += .3;
+    this.yspeed = .3;
 };
 
 
