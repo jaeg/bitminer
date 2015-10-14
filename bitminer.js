@@ -139,11 +139,12 @@ function Tile(type){
 }
 
 //http://gamedevelopment.tutsplus.com/tutorials/generate-random-cave-levels-using-cellular-automata--gamedev-9664
-WorldBuilder = {
-    dirtDepth: 100,
-    stoneDepth: 100,
-    chanceToStartAlive: .60,
-    generate: function(width, height){
+WorldBuilder = function(){
+    this.dirtDepth= 100;
+    this.stoneDepth= 100;
+    this.chanceToStartAlive= .60;
+}
+    WorldBuilder.prototype.generate= function(width, height){
         var startY = 100;
         for (var x = 0; x < width; x++)
         {
@@ -180,7 +181,7 @@ WorldBuilder = {
         }
     },
 
-    countNeighbors: function(x,y){
+    WorldBuilder.prototype.countNeighbors= function(x,y){
         var count = 0;
         for (var i = -1; i <2; i++)
         {
@@ -206,7 +207,7 @@ WorldBuilder = {
         return count;
     },
 
-    automaStep: function(){
+    WorldBuilder.prototype.automaStep= function(){
         deathLimit = 4;
         birthLimit = 5;
         for (var y = 0; y < tileManager.tiles.length; y++)
@@ -233,7 +234,6 @@ WorldBuilder = {
             }
         }
     }
-}
 
 function Camera(following, moveSpeed){
     this.following = following || null;
@@ -255,11 +255,14 @@ function Camera(following, moveSpeed){
     }
 }
 
-var player = {
-    x: 0,
-    y: 100, //Player x is in screen coords not array coords..
-    camera: '',
-    init: function(){
+
+
+var Player = function(){
+    this.x = 0;
+    this.y = 100; //Player x is in screen coords not array coords..
+    this.camera = '';
+}
+Player.prototype.init = function(){
         this.camera = new Camera(this,20);
         window.addEventListener('keydown', function(event) {
           switch (event.keyCode) {
@@ -281,28 +284,27 @@ var player = {
             }
         }, false);
     },
-    update: function(){
+    Player.prototype.update = function(){
         this.camera.update();
-    },
-    draw: function()
+    };
+    Player.prototype.draw = function()
     {
         var spriteSheet = resourceManager.getResource("tiles");
         ctx.drawImage(spriteSheet,0,0,128,128,(this.x* tileManager.tileSize) + this.camera.screenOffset.x,(this.y* tileManager.tileSize)+this.camera.screenOffset.y,32,32);
-    },
-    moveLeft: function(){
+    };
+    Player.prototype.moveLeft = function(){
         this.x -= .5;
-    },
-    moveRight: function(){
+    };
+    Player.prototype.moveRight = function(){
         this.x +=.5;
-    },
-    moveUp: function(){
+    };
+    Player.prototype.moveUp= function(){
         this.y -= .3;
-    },
-    moveDown: function(){
+    };
+    Player.prototype.moveDown= function(){
         this.y += .3;
-    }
-
-}
+    };
+player = new Player();
 
 
 //Base Game Class.  Call Init, Render, and Update as needed.  
@@ -324,7 +326,8 @@ var Game = {
         
         //Randomly create a world
         console.log("create world");
-        WorldBuilder.generate(1000,10);
+        worldBuilder = new WorldBuilder();
+        worldBuilder.generate(1000,10);
         /*
         for (var x = 0; x<1000; x++)
         {
