@@ -1,7 +1,29 @@
 canvas = document.getElementById('tilesCanvas');
 ctx = canvas.getContext('2d');
 
+//http://nokarma.org/2011/02/27/javascript-game-development-keyboard-input/
+var Key = {
+  _pressed: {},
 
+  LEFT: 37,
+  UP: 38,
+  RIGHT: 39,
+  DOWN: 40,
+  
+  isDown: function(keyCode) {
+    return this._pressed[keyCode];
+  },
+  
+  onKeydown: function(event) {
+    this._pressed[event.keyCode] = true;
+  },
+  
+  onKeyup: function(event) {
+    delete this._pressed[event.keyCode];
+  }
+};
+window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
+window.addEventListener('keydown', function(event) { Key.onKeydown(event); }, false);
 
 /*The resource manager controls the loading of game resources.  loadResources has optional callback and errorCallback functions to inform the rest of the program when
 loading is complete.
@@ -294,13 +316,17 @@ var Player = function()
     this.camera = '';
 }
 Player.prototype.init = function()
-    {
-        this.camera = new Camera(this, 20); 
-    },
-    Player.prototype.update = function()
-    {
-        this.camera.update();
-    };
+{
+    this.camera = new Camera(this, 20); 
+};
+Player.prototype.update = function()
+{
+    this.camera.update();
+    if (Key.isDown(Key.UP)) this.moveUp();
+    if (Key.isDown(Key.LEFT)) this.moveLeft();
+    if (Key.isDown(Key.DOWN)) this.moveDown();
+    if (Key.isDown(Key.RIGHT)) this.moveRight();
+};
 Player.prototype.draw = function()
 {
     var spriteSheet = resourceManager.getResource("tiles");
@@ -358,30 +384,7 @@ var Game = {
         }*/
 
 
-        this.player.init();
-        self = this;
-        window.addEventListener('keydown', function(event)
-        {
-            switch (event.keyCode)
-            {
-                case 37: // Left
-                    self.player.moveLeft();
-                    break;
-
-                case 38: // Up
-                    self.player.moveUp();
-                    break;
-
-                case 39: // Right
-                    self.player.moveRight();
-                    break;
-
-                case 40: // Down
-                    self.player.moveDown();
-                    break;
-            }
-        }, false);
-        
+        this.player.init();        
         tileManager.setCamera(this.player.camera);
     },
     render: function(tFrame)
