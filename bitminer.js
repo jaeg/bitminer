@@ -358,7 +358,7 @@ Player.prototype.update = function()
     var baseCol = Math.floor(this.x);
     var baseRow = Math.floor(this.y);
     var rowOverlap = this.y % tileManager.tileSize
-    console.log(!tileManager.tileIsSolid(baseCol, baseRow));
+    
     if (this.xspeed > 0)
     {
         if ((tileManager.tileIsSolid(baseCol + 1, baseRow) && !tileManager.tileIsSolid(baseCol, baseRow) || tileManager.tileIsSolid(baseCol + 1, baseRow + 1) && !tileManager.tileIsSolid(baseCol, baseRow + 1)))
