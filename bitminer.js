@@ -14,191 +14,216 @@ Example sources object:
 		}
 
 */
-var ResourceManager = function(){
+var ResourceManager = function()
+{
     this.totalResources = 0;
-	this.failedResources= 0;
-	this.successfulResources = 0;
-	this.resources = {};
+    this.failedResources = 0;
+    this.successfulResources = 0;
+    this.resources = {};
 }
 
-ResourceManager.prototype.loadResources = function(sources, callback, errorCallback){
-		var self = this;
-		for (var src in sources)
-		{
-			this.totalResources++;
-		}
-		
-		for (var src in sources)
-		{
-			this.resources[src] = new Image();
-			this.resources[src].onload = function() {
-				self.successfulResources++;
-				if (callback)
-				{
-					if (self.totalResources == (self.successfulResources + self.failedResources))
-					{
-						callback();
-					}
-				}
-			};
-			this.resources[src].onerror = function() {
-				self.failedResources++;	
-				if (errorCallback)
-				{
-					errorCallback(this);
-				}
-				
-				if (self.totalResources == (self.successfulResources + self.failedResources))
-				{
-					callback();
-				}
-			}
-			this.resources[src].src = sources[src];
-			
-		}
-}
+ResourceManager.prototype.loadResources = function(sources, callback, errorCallback)
+{
+    var self = this;
+    for (var src in sources)
+    {
+        this.totalResources++;
+    }
 
-ResourceManager.prototype.getResource = function(resourceName){
-		if (this.resources[resourceName] != undefined)
-		{
-			return this.resources[resourceName];
-		}
-		
-		return null;
-	}
-
-resourceManager = new ResourceManager();    
-    
-var TileManager = function(){
-    this.tileSize = 32;
-    this.currentCamera = null;
-    this.tiles = [[]];
-}
-    TileManager.prototype.update= function(){};
-    TileManager.prototype.draw= function(){
-        if (this.currentCamera != null)
+    for (var src in sources)
+    {
+        this.resources[src] = new Image();
+        this.resources[src].onload = function()
         {
-            //Drawing is based off screen offset so get a point near the center for a "camera"
-            var cameraX = canvas.width/2 - this.currentCamera.screenOffset.x;
-            var cameraY = canvas.height/2 - this.currentCamera.screenOffset.y  ;
-
-            //Get min and max tiles.
-            var cameraMinX = Math.floor((cameraX - canvas.width/2 )/this.tileSize);
-            var cameraMaxX = Math.floor((cameraX + canvas.width/2 )/this.tileSize);
-            var cameraMinY = Math.floor((cameraY - canvas.height/2)/this.tileSize);
-            var cameraMaxY = Math.floor((cameraY + canvas.height/2 )/this.tileSize);
-            for (var y = cameraMinY; y <= cameraMaxY; y++)
+            self.successfulResources++;
+            if (callback)
             {
-                for (var x = cameraMinX; x <= cameraMaxX; x++)
+                if (self.totalResources == (self.successfulResources + self.failedResources))
                 {
-                    if (!this.tiles[y]) this.tiles[y] = []
-                    var tile = this.tiles[y][x];
-                    if (tile != null)
-                    {
-                        tile.draw((x*this.tileSize) + this.currentCamera.screenOffset.x, (y*this.tileSize)+this.currentCamera.screenOffset.y);
-                    }
+                    callback();
                 }
+            }
+        };
+        this.resources[src].onerror = function()
+        {
+            self.failedResources++;
+            if (errorCallback)
+            {
+                errorCallback(this);
+            }
 
+            if (self.totalResources == (self.successfulResources + self.failedResources))
+            {
+                callback();
             }
         }
-    };
-    TileManager.prototype.setCamera= function(camera){
-        this.currentCamera = camera;   
-    };
-    TileManager.prototype.addTile= function(x,y,tile){
-        if (!this.tiles[y]) this.tiles[y] = []
-        this.tiles[y][x] = tile;
-    };
-    TileManager.prototype.removeTile= function(x,y){
-        this.tiles[y][x] = undefined;
-    };
-    TileManager.prototype.moveTile= function(x1,y1,x2,y2){
-      this.addTile(x2,y2,this.tiles[y1,x1]);
-      this.removeTile(x1,y1);
-    };
+        this.resources[src].src = sources[src];
+
+    }
+}
+
+ResourceManager.prototype.getResource = function(resourceName)
+{
+    if (this.resources[resourceName] != undefined)
+    {
+        return this.resources[resourceName];
+    }
+
+    return null;
+}
+
+resourceManager = new ResourceManager();
+
+var TileManager = function()
+{
+    this.tileSize = 32;
+    this.currentCamera = null;
+    this.tiles = [
+        []
+    ];
+}
+TileManager.prototype.update = function() {};
+TileManager.prototype.draw = function()
+{
+    if (this.currentCamera != null)
+    {
+        //Drawing is based off screen offset so get a point near the center for a "camera"
+        var cameraX = canvas.width / 2 - this.currentCamera.screenOffset.x;
+        var cameraY = canvas.height / 2 - this.currentCamera.screenOffset.y;
+
+        //Get min and max tiles.
+        var cameraMinX = Math.floor((cameraX - canvas.width / 2) / this.tileSize);
+        var cameraMaxX = Math.floor((cameraX + canvas.width / 2) / this.tileSize);
+        var cameraMinY = Math.floor((cameraY - canvas.height / 2) / this.tileSize);
+        var cameraMaxY = Math.floor((cameraY + canvas.height / 2) / this.tileSize);
+        for (var y = cameraMinY; y <= cameraMaxY; y++)
+        {
+            for (var x = cameraMinX; x <= cameraMaxX; x++)
+            {
+                if (!this.tiles[y]) this.tiles[y] = []
+                var tile = this.tiles[y][x];
+                if (tile != null)
+                {
+                    tile.draw((x * this.tileSize) + this.currentCamera.screenOffset.x, (y * this.tileSize) + this.currentCamera.screenOffset.y);
+                }
+            }
+
+        }
+    }
+};
+TileManager.prototype.setCamera = function(camera)
+{
+    this.currentCamera = camera;
+};
+TileManager.prototype.addTile = function(x, y, tile)
+{
+    if (!this.tiles[y]) this.tiles[y] = []
+    this.tiles[y][x] = tile;
+};
+TileManager.prototype.removeTile = function(x, y)
+{
+    this.tiles[y][x] = undefined;
+};
+TileManager.prototype.moveTile = function(x1, y1, x2, y2)
+{
+    this.addTile(x2, y2, this.tiles[y1, x1]);
+    this.removeTile(x1, y1);
+};
 
 var tileManager = new TileManager();
 
-function Tile(type){
+function Tile(type)
+{
     this.hp = 100;
     this.type = type;
-    
-    this.draw = function(screenX,screenY){
+
+    this.draw = function(screenX, screenY)
+    {
         var spriteSheet = resourceManager.getResource("tiles");
         switch (type)
         {
-            case 1:ctx.drawImage(spriteSheet,650,0,128,128,screenX,screenY,tileManager.tileSize,tileManager.tileSize);break;
-            case 2:ctx.drawImage(spriteSheet,650,130,128,128,screenX,screenY,tileManager.tileSize,tileManager.tileSize);break;
-            case 3:ctx.drawImage(spriteSheet,256,650,128,128,screenX,screenY,tileManager.tileSize,tileManager.tileSize);break;
+            case 1:
+                ctx.drawImage(spriteSheet, 650, 0, 128, 128, screenX, screenY, tileManager.tileSize, tileManager.tileSize);
+                break;
+            case 2:
+                ctx.drawImage(spriteSheet, 650, 130, 128, 128, screenX, screenY, tileManager.tileSize, tileManager.tileSize);
+                break;
+            case 3:
+                ctx.drawImage(spriteSheet, 256, 650, 128, 128, screenX, screenY, tileManager.tileSize, tileManager.tileSize);
+                break;
         }
     }
-    
-    this.update = function(){
-        
+
+    this.update = function() {
+
     }
 }
 
 //http://gamedevelopment.tutsplus.com/tutorials/generate-random-cave-levels-using-cellular-automata--gamedev-9664
-WorldBuilder = function(){
-    this.dirtDepth= 100;
-    this.stoneDepth= 100;
-    this.chanceToStartAlive= .60;
+WorldBuilder = function()
+{
+    this.dirtDepth = 100;
+    this.stoneDepth = 100;
+    this.chanceToStartAlive = .60;
 }
-    WorldBuilder.prototype.generate= function(width, height){
+WorldBuilder.prototype.generate = function(width, height)
+    {
         var startY = 100;
         for (var x = 0; x < width; x++)
         {
             currentY = startY + 1;
             //Grass section
-            tileManager.addTile(x,startY,new Tile(1));
+            tileManager.addTile(x, startY, new Tile(1));
 
             //Dirt Section
-            while (currentY < startY+this.dirtDepth)
+            while (currentY < startY + this.dirtDepth)
             {
                 if (Math.random() < this.chanceToStartAlive + .20)
                 {
-                    tileManager.addTile(x,currentY,new Tile(2));
+                    tileManager.addTile(x, currentY, new Tile(2));
                 }
                 currentY++;
             }
 
             //Stone Section
-            while (currentY < startY+this.dirtDepth+this.stoneDepth)
+            while (currentY < startY + this.dirtDepth + this.stoneDepth)
             {
                 if (Math.random() < this.chanceToStartAlive)
                 {
-                    tileManager.addTile(x,currentY,new Tile(3));
+                    tileManager.addTile(x, currentY, new Tile(3));
                 }
                 currentY++;
             }
 
-            startY += Math.ceil((Math.random()*2 - 1));
+            startY += Math.ceil((Math.random() * 2 - 1));
         }
 
         for (var i = 0; i < 100; i++)
         {
-          this.automaStep();
+            this.automaStep();
         }
     },
 
-    WorldBuilder.prototype.countNeighbors= function(x,y){
+    WorldBuilder.prototype.countNeighbors = function(x, y)
+    {
         var count = 0;
-        for (var i = -1; i <2; i++)
+        for (var i = -1; i < 2; i++)
         {
-            for (var j = -1; j<2; j++)
+            for (var j = -1; j < 2; j++)
             {
-                var neighbour_x = x+i;
-                var neighbour_y = y+j;
+                var neighbour_x = x + i;
+                var neighbour_y = y + j;
                 if (!tileManager.tiles[neighbour_y]) tileManager.tiles[neighbour_y] = []
-                if (i == 0 && j ==0)
+                if (i == 0 && j == 0)
                 {
 
                 }
-                else if(neighbour_x < 0 || neighbour_y < 0 || neighbour_y >= tileManager.tiles.length || neighbour_x >= tileManager.tiles[y].length)
+                else if (neighbour_x < 0 || neighbour_y < 0 || neighbour_y >= tileManager.tiles.length || neighbour_x >= tileManager.tiles[y].length)
                 {
                     count++;
                 }
-                else if(tileManager.tiles[neighbour_y][neighbour_x] != undefined){
+                else if (tileManager.tiles[neighbour_y][neighbour_x] != undefined)
+                {
                     count++;
                 }
             }
@@ -207,7 +232,8 @@ WorldBuilder = function(){
         return count;
     },
 
-    WorldBuilder.prototype.automaStep= function(){
+    WorldBuilder.prototype.automaStep = function()
+    {
         deathLimit = 4;
         birthLimit = 5;
         for (var y = 0; y < tileManager.tiles.length; y++)
@@ -215,12 +241,12 @@ WorldBuilder = function(){
             if (!tileManager.tiles[y]) tileManager.tiles[y] = []
             for (var x = 0; x < tileManager.tiles[y].length; x++)
             {
-                var neighbourCount = this.countNeighbors(x,y);
+                var neighbourCount = this.countNeighbors(x, y);
                 if (tileManager.tiles[y][x] != undefined)
                 {
                     if (neighbourCount < deathLimit)
                     {
-                        tileManager.removeTile(x,y);
+                        tileManager.removeTile(x, y);
                     }
                 }
                 else
@@ -228,82 +254,95 @@ WorldBuilder = function(){
 
                     if (neighbourCount > birthLimit)
                     {
-                        tileManager.addTile(x,y,new Tile(2));
+                        tileManager.addTile(x, y, new Tile(2));
                     }
                 }
             }
         }
     }
 
-function Camera(following, moveSpeed){
+function Camera(following, moveSpeed)
+{
     this.following = following || null;
     this.moveSpeed = moveSpeed || 3;
-    this.screenOffset = {x:0, y:0};
+    this.screenOffset = {
+        x: 0,
+        y: 0
+    };
     this.update = function()
     {
         //Screen move
-        if (this.following.x*tileManager.tileSize + this.screenOffset.x + tileManager.tileSize > canvas.width)
+        if (this.following.x * tileManager.tileSize + this.screenOffset.x + tileManager.tileSize > canvas.width)
         {
             this.screenOffset.x -= this.moveSpeed;
         }
-        if (this.following.x*tileManager.tileSize + this.screenOffset.x < 0)
+        if (this.following.x * tileManager.tileSize + this.screenOffset.x < 0)
             this.screenOffset.x += this.moveSpeed;
-        if (this.following.y*tileManager.tileSize + this.screenOffset.y + tileManager.tileSize > canvas.height)
+        if (this.following.y * tileManager.tileSize + this.screenOffset.y + tileManager.tileSize > canvas.height)
             this.screenOffset.y -= this.moveSpeed;
-        if (this.following.y*tileManager.tileSize + this.screenOffset.y < 0)
+        if (this.following.y * tileManager.tileSize + this.screenOffset.y < 0)
             this.screenOffset.y += this.moveSpeed;
     }
 }
 
 
 
-var Player = function(){
+var Player = function()
+{
     this.x = 0;
     this.y = 100; //Player x is in screen coords not array coords..
     this.camera = '';
 }
-Player.prototype.init = function(){
-        this.camera = new Camera(this,20);
-        window.addEventListener('keydown', function(event) {
-          switch (event.keyCode) {
-            case 37: // Left
-              player.moveLeft();
-            break;
+Player.prototype.init = function()
+    {
+        this.camera = new Camera(this, 20);
+        window.addEventListener('keydown', function(event)
+        {
+            switch (event.keyCode)
+            {
+                case 37: // Left
+                    player.moveLeft();
+                    break;
 
-            case 38: // Up
-              player.moveUp();
-            break;
+                case 38: // Up
+                    player.moveUp();
+                    break;
 
-            case 39: // Right
-              player.moveRight();
-            break;
+                case 39: // Right
+                    player.moveRight();
+                    break;
 
-            case 40: // Down
-              player.moveDown();
-            break;
+                case 40: // Down
+                    player.moveDown();
+                    break;
             }
         }, false);
     },
-    Player.prototype.update = function(){
+    Player.prototype.update = function()
+    {
         this.camera.update();
     };
-    Player.prototype.draw = function()
-    {
-        var spriteSheet = resourceManager.getResource("tiles");
-        ctx.drawImage(spriteSheet,0,0,128,128,(this.x* tileManager.tileSize) + this.camera.screenOffset.x,(this.y* tileManager.tileSize)+this.camera.screenOffset.y,32,32);
-    };
-    Player.prototype.moveLeft = function(){
-        this.x -= .5;
-    };
-    Player.prototype.moveRight = function(){
-        this.x +=.5;
-    };
-    Player.prototype.moveUp= function(){
-        this.y -= .3;
-    };
-    Player.prototype.moveDown= function(){
-        this.y += .3;
-    };
+Player.prototype.draw = function()
+{
+    var spriteSheet = resourceManager.getResource("tiles");
+    ctx.drawImage(spriteSheet, 0, 0, 128, 128, (this.x * tileManager.tileSize) + this.camera.screenOffset.x, (this.y * tileManager.tileSize) + this.camera.screenOffset.y, 32, 32);
+};
+Player.prototype.moveLeft = function()
+{
+    this.x -= .5;
+};
+Player.prototype.moveRight = function()
+{
+    this.x += .5;
+};
+Player.prototype.moveUp = function()
+{
+    this.y -= .3;
+};
+Player.prototype.moveDown = function()
+{
+    this.y += .3;
+};
 player = new Player();
 
 
@@ -316,18 +355,18 @@ var Game = {
     init: function()
     {
         //Image sources for the game
-		var sources = {
-			tiles: "images/spritesheet_tiles.png",
-			characters: "images/spritesheet_characters.png",
-			items: "images/spritesheet_items.png",
-			particles: "images/spritesheet_particles.png"
-		}
-		resourceManager.loadResources(sources);
-        
+        var sources = {
+            tiles: "images/spritesheet_tiles.png",
+            characters: "images/spritesheet_characters.png",
+            items: "images/spritesheet_items.png",
+            particles: "images/spritesheet_particles.png"
+        }
+        resourceManager.loadResources(sources);
+
         //Randomly create a world
         console.log("create world");
         worldBuilder = new WorldBuilder();
-        worldBuilder.generate(1000,10);
+        worldBuilder.generate(1000, 10);
         /*
         for (var x = 0; x<1000; x++)
         {
@@ -337,57 +376,65 @@ var Game = {
                 tileManager.addTile(x,y,tile);
             }
         }*/
-        
+
 
         player.init();
         tileManager.setCamera(player.camera);
     },
-    render: function(tFrame){
-        ctx.clearRect(0,0,canvas.width,canvas.height);
+    render: function(tFrame)
+    {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         tileManager.draw();
         player.draw();
     },
-    update: function(){
+    update: function()
+    {
         player.update();
         tileManager.update();
     }
- 
-    
+
+
 }
 
 
 //Based on example from https://developer.mozilla.org/en-US/docs/Games/Anatomy
-;(function () {
-  function main( tFrame ) {
-    Game.stopMain = window.requestAnimationFrame( main );
-    var nextTick = Game.lastTick + Game.tickLength;
-    var numTicks = 0;
+;
+(function()
+{
+    function main(tFrame)
+    {
+        Game.stopMain = window.requestAnimationFrame(main);
+        var nextTick = Game.lastTick + Game.tickLength;
+        var numTicks = 0;
 
-    //If tFrame < nextTick then 0 ticks need to be updated (0 is default for numTicks).
-    //If tFrame = nextTick then 1 tick needs to be updated (and so forth).
-    //Note: As we mention in summary, you should keep track of how large numTicks is.
-    //If it is large, then either your game was asleep, or the machine cannot keep up.
-    if (tFrame > nextTick) {
-      var timeSinceTick = tFrame - Game.lastTick;
-      numTicks = Math.floor( timeSinceTick / Game.tickLength );
+        //If tFrame < nextTick then 0 ticks need to be updated (0 is default for numTicks).
+        //If tFrame = nextTick then 1 tick needs to be updated (and so forth).
+        //Note: As we mention in summary, you should keep track of how large numTicks is.
+        //If it is large, then either your game was asleep, or the machine cannot keep up.
+        if (tFrame > nextTick)
+        {
+            var timeSinceTick = tFrame - Game.lastTick;
+            numTicks = Math.floor(timeSinceTick / Game.tickLength);
+        }
+
+        queueUpdates(numTicks);
+        Game.render(tFrame);
+        Game.lastRender = tFrame;
     }
 
-    queueUpdates( numTicks );
-    Game.render( tFrame );
-    Game.lastRender = tFrame;
-  }
-
-  function queueUpdates( numTicks ) {
-    for(var i=0; i < numTicks; i++) {
-      Game.lastTick = Game.lastTick + Game.tickLength; //Now lastTick is this tick.
-      Game.update();
+    function queueUpdates(numTicks)
+    {
+        for (var i = 0; i < numTicks; i++)
+        {
+            Game.lastTick = Game.lastTick + Game.tickLength; //Now lastTick is this tick.
+            Game.update();
+        }
     }
-  }
 
-  Game.lastTick = performance.now();
-  Game.lastRender = Game.lastTick; //Pretend the first draw was on first update.
-  Game.tickLength = 50; //This sets your simulation to run at 20Hz (50ms)
-  
-  Game.init();
-  main(performance.now()); // Start the cycle
+    Game.lastTick = performance.now();
+    Game.lastRender = Game.lastTick; //Pretend the first draw was on first update.
+    Game.tickLength = 50; //This sets your simulation to run at 20Hz (50ms)
+
+    Game.init();
+    main(performance.now()); // Start the cycle
 })();
