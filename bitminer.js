@@ -374,6 +374,22 @@ Player.prototype.update = function()
             this.x = baseCol + 1;
         }
     }
+    
+        if (this.yspeed > 0)
+    {
+        if ((tileManager.tileIsSolid(baseCol, baseRow + 1) && !tileManager.tileIsSolid(baseCol, baseRow) || tileManager.tileIsSolid(baseCol + 1, baseRow + 1) && !tileManager.tileIsSolid(baseCol + 1, baseRow)))
+        {
+            this.y = baseRow;
+        }
+    }
+
+    if (this.yspeed < 0)
+    {
+        if ((!tileManager.tileIsSolid(baseCol, baseRow + 1) && tileManager.tileIsSolid(baseCol, baseRow) || !tileManager.tileIsSolid(baseCol + 1, baseRow + 1) && tileManager.tileIsSolid(baseCol + 1, baseRow)))
+        {
+            this.y = baseRow + 1;
+        }
+    }
 
     this.xspeed = 0;
     this.yspeed = 0;
