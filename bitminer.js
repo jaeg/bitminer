@@ -342,7 +342,22 @@ Player.prototype.update = function()
     this.x += this.xspeed;
     this.y += this.yspeed;
     
+    //http://www.emanueleferonato.com/2014/01/17/creation-of-an-html5-tile-based-platform-game-with-no-engines-behind-pure-code/
+    var baseCol = Math.floor(this.x);
+    var baseRow = Math.floor(this.y);
+    var rowOverlap = this.y%tileManager.tileSize
+    console.log(!tileManager.tileIsSolid(baseCol,baseRow));
+    if(this.xspeed>0){
+			if((tileManager.tileIsSolid(baseCol+1,baseRow) && !tileManager.tileIsSolid(baseCol,baseRow) || tileManager.tileIsSolid(baseCol+1,baseRow+1) && !tileManager.tileIsSolid(baseCol,baseRow+1))){
+				this.x=baseCol;
+			}	
+    }
     
+    if(this.xspeed<0){
+			if((!tileManager.tileIsSolid(baseCol+1,baseRow) && tileManager.tileIsSolid(baseCol,baseRow) || !tileManager.tileIsSolid(baseCol+1,baseRow+1) && tileManager.tileIsSolid(baseCol,baseRow+1))){
+				this.x=baseCol+1;
+			}	
+    }
     
     this.xspeed = 0;
     this.yspeed = 0;
