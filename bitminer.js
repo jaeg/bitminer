@@ -325,24 +325,27 @@ WorldBuilder.prototype.generate = function(width, height)
 function Camera(following, moveSpeed)
 {
     this.following = following || null;
-    this.moveSpeed = moveSpeed || 3;
+    this.moveSpeedX = moveSpeed || 10;
+    this.moveSpeedY = moveSpeed || 10;
     this.screenOffset = {
         x: 0,
         y: 0
     };
+    this.tolerenceX = canvas.width/2;
+    this.tolerenceY = canvas.height/2;
     this.update = function()
     {
         //Screen move
-        if (this.following.x * tileManager.tileSize + this.screenOffset.x + tileManager.tileSize > canvas.width)
+        if (this.following.x * tileManager.tileSize + this.screenOffset.x + tileManager.tileSize > canvas.width - this.tolerenceX)
         {
-            this.screenOffset.x -= this.moveSpeed;
+            this.screenOffset.x -= this.moveSpeedX;
         }
-        if (this.following.x * tileManager.tileSize + this.screenOffset.x < 0)
-            this.screenOffset.x += this.moveSpeed;
-        if (this.following.y * tileManager.tileSize + this.screenOffset.y + tileManager.tileSize > canvas.height)
-            this.screenOffset.y -= this.moveSpeed;
-        if (this.following.y * tileManager.tileSize + this.screenOffset.y < 0)
-            this.screenOffset.y += this.moveSpeed;
+        if (this.following.x * tileManager.tileSize + this.screenOffset.x < 0 + this.tolerenceX)
+            this.screenOffset.x += this.moveSpeedX;
+        if (this.following.y * tileManager.tileSize + this.screenOffset.y + tileManager.tileSize > canvas.height - this.tolerenceY)
+            this.screenOffset.y -= this.moveSpeedY;
+        if (this.following.y * tileManager.tileSize + this.screenOffset.y < 0 + this.tolerenceY)
+            this.screenOffset.y += this.moveSpeedY;
     }
 }
 
@@ -367,6 +370,13 @@ Player.prototype.update = function()
     if (Key.isDown(Key.LEFT)) this.moveLeft();
     if (Key.isDown(Key.DOWN)) this.moveDown();
     if (Key.isDown(Key.RIGHT)) this.moveRight();
+
+    if (this.xspeed != 0 || this.yspeed !=0)
+    {
+        
+        this.camera.moveSpeedX = Math.abs(tileManager.tileSize*this.xspeed);
+        this.camera.moveSpeedY = Math.abs(tileManager.tileSize*this.yspeed);
+    }
 
     this.x += this.xspeed;
     this.y += this.yspeed;
