@@ -26,6 +26,19 @@ var Key = {
         delete this._pressed[event.keyCode];
     }
 };
+
+var Mouse = {
+    Clicked: false,
+    coords: {x:0,y:0},
+    //http://www.html5canvastutorials.com/advanced/html5-canvas-mouse-coordinates/
+    setMousePos: function(canvas,evt)
+    {
+        var rect = canvas.getBoundingClientRect();
+        this.coords.x = Math.round((evt.clientX-rect.left)/(rect.right-rect.left)*canvas.width),
+        this.coords.y = Math.round((evt.clientY-rect.top)/(rect.bottom-rect.top)*canvas.height)
+
+    },
+}
 window.addEventListener('keyup', function(event)
 {
     Key.onKeyup(event);
@@ -33,6 +46,10 @@ window.addEventListener('keyup', function(event)
 window.addEventListener('keydown', function(event)
 {
     Key.onKeydown(event);
+}, false);
+
+window.addEventListener('mousemove', function(evt) {
+    Mouse.setMousePos(canvas, evt);
 }, false);
 
 /*The resource manager controls the loading of game resources.  loadResources has optional callback and errorCallback functions to inform the rest of the program when
@@ -393,6 +410,12 @@ Player.prototype.update = function()
 
     this.xspeed = 0;
     this.yspeed = 0;
+
+
+    //Mouse Stuff
+    var tileX = Math.floor((Mouse.coords.x - this.camera.screenOffset.x)/tileManager.tileSize);
+    var tileY = Math.floor((Mouse.coords.y - this.camera.screenOffset.y)/tileManager.tileSize);
+    console.log(tileX+","+tileY);
 };
 Player.prototype.draw = function()
 {
