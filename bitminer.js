@@ -415,7 +415,7 @@ Player.prototype.update = function()
     //Mouse Stuff
     var tileX = Math.floor((Mouse.coords.x - this.camera.screenOffset.x)/tileManager.tileSize);
     var tileY = Math.floor((Mouse.coords.y - this.camera.screenOffset.y)/tileManager.tileSize);
-    console.log(tileX+","+tileY);
+    tileManager.removeTile(tileX,tileY);
 };
 Player.prototype.draw = function()
 {
