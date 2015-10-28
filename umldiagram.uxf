@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>410</x>
+      <y>30</y>
+      <w>310</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>ResourceManager
+--
+totalResources
+failedResources
+successfulResources
+--
+loadResources(sources, callback, errorCallback)
+getResources(resourceName)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>760</x>
+      <y>30</y>
+      <w>240</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>DependencyInjector
+--
+dependencies
+--
+addDependency(name,system)
+getDependencies(dependencyList)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>310</x>
+      <y>220</y>
+      <w>160</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>TileManager
+--
+tileSize
+currentCamera
+tiles
+--
+update()
+draw()
+setCamera(camera)
+addTile(x,y,tile)
+removeTile(x,y)
+moveTile(x1,y1,x2,y2)
+tileAt(x,y)
+tileIsSolid(x,y)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>640</x>
+      <y>220</y>
+      <w>160</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>Tile
+--
+hp
+type
+solid
+--
+Tile(type)
+draw(screenX,screenY)
+update()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>380</x>
+      <y>140</y>
+      <w>190</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>10.0;80.0;170.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>540</x>
+      <y>140</y>
+      <w>200</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>180.0;80.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>460</x>
+      <y>240</y>
+      <w>200</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+tileSize</panel_attributes>
+    <additional_attributes>180.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>130</x>
+      <y>560</y>
+      <w>230</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>WorldBuilder
+--
+dirtDepth
+stoneDepth
+chanceToStartAlive
+--
+generate(width, height)
+countNeighbors(x,y)
+automaStep()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>230</x>
+      <y>430</y>
+      <w>170</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+tileSize
+Functions</panel_attributes>
+    <additional_attributes>10.0;130.0;150.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>370</x>
+      <y>560</y>
+      <w>110</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>Camera
+--
+following
+moveSpeedX
+moveSpeedY
+screenOffset
+tolerenceX
+tolerenceY
+--
+update()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>370</x>
+      <y>430</y>
+      <w>90</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+tileSize</panel_attributes>
+    <additional_attributes>40.0;130.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>500</x>
+      <y>560</y>
+      <w>100</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>Player
+--
+x
+y
+camera
+xspeed
+yspeed
+--
+init()
+update()
+draw()
+moveLeft()
+moveRight()
+moveUp()
+moveDown()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>370</x>
+      <y>430</y>
+      <w>200</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>180.0;130.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>540</x>
+      <y>140</y>
+      <w>30</w>
+      <h>440</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>10.0;420.0;10.0;10.0</additional_attributes>
+  </element>
+</diagram>
