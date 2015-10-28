@@ -123,6 +123,26 @@ ResourceManager.prototype.getResource = function(resourceName)
 
 resourceManager = new ResourceManager();
 
+var DependencyInjector = function()
+{
+    this.dependencies = {};
+    this.addDependency = function(name, system)
+    {
+        this.dependencies[name] = system;
+    }
+    this.getDependencies = function(dependencyList)
+    {
+        var list = {};
+        var self = this;
+        dependencyList.forEach(function(element, index, array)
+        {
+            list [element] = self.dependencies[element];
+        });
+        
+        return list;
+    }
+}
+
 var TileManager = function()
 {
     this.tileSize = 32;
