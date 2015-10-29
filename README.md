@@ -1,3 +1,4 @@
+#browserify branch
 # bitminer
 Terraria style game in javascript
 
