@@ -1,3 +1,4 @@
+#browserify branch
 # bitminer
 Terraria style game in javascript
 
@@ -12,7 +13,7 @@ Terraria style game in javascript
 - [] Items
 - [] Give Player ability to place tiles
 - [] Actual mining. 
-- [] Separate out components into Browserify modules.
+- [x] Separate out components into Browserify modules.
 
 ###Server Side
 - [] Move World Generation to server side
