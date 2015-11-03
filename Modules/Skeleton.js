@@ -8,13 +8,22 @@ function lengthDir_y(len,dir){
     return -Math.sin(rads)*len;
 }
 
+
+
 var Bone = function(){
+    this.name = "";
     this.localPosition = {x:0,y:0};
     this.position = {x:0, y:0};
     this.localAngle = 0;
     this.angle = 0;
     this.length = 0;
     this.parent = null;
+    this.children = [];
+}
+
+Bone.prototype.addChild = function(child)
+{
+    this.children[child.name] = child;
 }
 
 Bone.prototype.updatePosition = function()
@@ -48,6 +57,11 @@ Bone.prototype.draw = function()
     {
         this.angle = this.localAngle;
         this.position = this.localPosition
+    }
+    
+    for (var child in this.children)
+    {
+        this.children[child].draw();   
     }
     
 }
