@@ -24,6 +24,7 @@ var Bone = function(){
 Bone.prototype.addChild = function(child)
 {
     this.children[child.name] = child;
+    child.parent = this;
 }
 
 Bone.prototype.updatePosition = function()
@@ -40,9 +41,10 @@ Bone.prototype.updatePosition = function()
 
 Bone.prototype.draw = function()
 {
+    //console.log(this);
     if (this.parent != null)
     {
-        //console.log(this);
+        
         this.angle = this.localAngle + this.parent.angle;
         this.position.x = lengthDir_x(this.length,this.angle) + this.parent.position.x;
         this.position.y = lengthDir_y(this.length,this.angle) + this.parent.position.y;
@@ -65,4 +67,47 @@ Bone.prototype.draw = function()
     }
     
 }
+
+var HumanoidFactory = function()
+{
+    var root = new Bone();
+    var head = new Bone();
+    head.length = 20;
+    head.localAngle = 90;
+    head.name = "head";
+    root.addChild(head);
+    
+    var body = new Bone();
+    body.length = 50;
+    body.localAngle = 270;
+    body.name = "body";
+    root.addChild(body);
+    
+    var rightArm = new Bone();
+    rightArm.length = 50;
+    rightArm.localAngle = 0;
+    rightArm.name = "rightArm";
+    root.addChild(rightArm);
+    
+    var leftArm = new Bone();
+    leftArm.length = 50;
+    leftArm.localAngle = 0;
+    leftArm.name = "leftArm";
+    root.addChild(leftArm);
+    
+    var leftLeg = new Bone();
+    leftLeg.length = 50;
+    leftLeg.localAngle = 0;
+    leftLeg.name = "leftLeg";
+    body.addChild(leftLeg);
+    
+    var rightLeg = new Bone();
+    rightLeg.length = 50;
+    rightLeg.localAngle = 0;
+    rightLeg.name = "rightLeg";
+    body.addChild(rightLeg);
+    
+    return root;
+}
 module.exports.Bone = Bone;
+module.exports.HumanoidFactory = HumanoidFactory;
