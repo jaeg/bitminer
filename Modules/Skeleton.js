@@ -47,6 +47,15 @@ Bone.prototype.getChild = function(name)
 
 Bone.prototype.update = function()
 {
+    if (this.localAngle > 360)
+    {
+        this.localAngle -= 360;   
+    }
+    
+    if (this.localAngle < 0)
+    {
+        this.localAngle += 360;  
+    }
     if (this.parent != null)
     {
         this.angle = this.localAngle + this.parent.angle;
