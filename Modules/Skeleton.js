@@ -39,21 +39,14 @@ Bone.prototype.updatePosition = function()
     }
 }
 
-Bone.prototype.draw = function()
+Bone.prototype.update = function()
 {
-    //console.log(this);
     if (this.parent != null)
     {
         
         this.angle = this.localAngle + this.parent.angle;
         this.position.x = lengthDir_x(this.length,this.angle) + this.parent.position.x;
         this.position.y = lengthDir_y(this.length,this.angle) + this.parent.position.y;
-        
-        ctx.beginPath();
-        ctx.moveTo(this.parent.position.x,this.parent.position.y);
-        ctx.lineTo(this.position.x,this.position.y);
-        ctx.strokeStyle = '#ff0000';
-        ctx.stroke();
     }
     else
     {
@@ -61,6 +54,23 @@ Bone.prototype.draw = function()
         this.position = this.localPosition
     }
     
+    for (var child in this.children)
+    {
+        this.children[child].update();   
+    }
+}
+
+Bone.prototype.draw = function()
+{
+    if (this.parent != null)
+    {
+        ctx.beginPath();
+        ctx.moveTo(this.parent.position.x,this.parent.position.y);
+        ctx.lineTo(this.position.x,this.position.y);
+        ctx.strokeStyle = '#ff0000';
+        ctx.stroke();
+    }
+
     for (var child in this.children)
     {
         this.children[child].draw();   
