@@ -1,5 +1,4 @@
-function Camera(following, moveSpeed, tileManager)
-{
+function Camera(following, moveSpeed, tileManager) {
     this.following = following || null;
     this.moveSpeedX = moveSpeed || 10;
     this.moveSpeedY = moveSpeed || 10;
@@ -7,14 +6,12 @@ function Camera(following, moveSpeed, tileManager)
         x: 0,
         y: 0
     };
-    this.tolerenceX = canvas.width/2;
-    this.tolerenceY = canvas.height/2;
+    this.tolerenceX = canvas.width / 2;
+    this.tolerenceY = canvas.height / 2;
     this.tileManager = tileManager;
-    this.update = function()
-    {
+    this.update = function() {
         //Screen move
-        if (this.following.x * this.tileManager.tileSize + this.screenOffset.x + this.tileManager.tileSize > canvas.width - this.tolerenceX)
-        {
+        if (this.following.x * this.tileManager.tileSize + this.screenOffset.x + this.tileManager.tileSize > canvas.width - this.tolerenceX) {
             this.screenOffset.x -= this.moveSpeedX;
         }
         if (this.following.x * this.tileManager.tileSize + this.screenOffset.x < 0 + this.tolerenceX)

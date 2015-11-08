@@ -9,46 +9,36 @@ Example sources object:
 		}
 
 */
-var ResourceManager = function()
-{
+var ResourceManager = function() {
     this.totalResources = 0;
     this.failedResources = 0;
     this.successfulResources = 0;
     this.resources = {};
 }
 
-ResourceManager.prototype.loadResources = function(sources, callback, errorCallback)
-{
+ResourceManager.prototype.loadResources = function(sources, callback, errorCallback) {
     var self = this;
-    for (var src in sources)
-    {
+    for (var src in sources) {
         this.totalResources++;
     }
 
-    for (var src in sources)
-    {
+    for (var src in sources) {
         this.resources[src] = new Image();
-        this.resources[src].onload = function()
-        {
+        this.resources[src].onload = function() {
             self.successfulResources++;
-            if (callback)
-            {
-                if (self.totalResources == (self.successfulResources + self.failedResources))
-                {
+            if (callback) {
+                if (self.totalResources == (self.successfulResources + self.failedResources)) {
                     callback();
                 }
             }
         };
-        this.resources[src].onerror = function()
-        {
+        this.resources[src].onerror = function() {
             self.failedResources++;
-            if (errorCallback)
-            {
+            if (errorCallback) {
                 errorCallback(this);
             }
 
-            if (self.totalResources == (self.successfulResources + self.failedResources))
-            {
+            if (self.totalResources == (self.successfulResources + self.failedResources)) {
                 callback();
             }
         }
@@ -57,10 +47,8 @@ ResourceManager.prototype.loadResources = function(sources, callback, errorCallb
     }
 }
 
-ResourceManager.prototype.getResource = function(resourceName)
-{
-    if (this.resources[resourceName] != undefined)
-    {
+ResourceManager.prototype.getResource = function(resourceName) {
+    if (this.resources[resourceName] != undefined) {
         return this.resources[resourceName];
     }
 

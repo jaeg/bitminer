@@ -1,15 +1,12 @@
-function Tile(type, tileManager)
-{
+function Tile(type, tileManager) {
     this.hp = 100;
     this.type = type;
     this.solid = true;
     this.tileManager = tileManager;
 
-    this.draw = function(screenX, screenY)
-    {
+    this.draw = function(screenX, screenY) {
         var spriteSheet = resourceManager.getResource("tiles");
-        switch (type)
-        {
+        switch (type) {
             case 1:
                 ctx.drawImage(spriteSheet, 650, 0, 128, 128, screenX, screenY, this.tileManager.tileSize, this.tileManager.tileSize);
                 break;
