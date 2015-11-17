@@ -1,9 +1,16 @@
 canvas = document.getElementById('tilesCanvas');
 ctx = canvas.getContext('2d');
 
-//http://nokarma.org/2011/02/27/javascript-game-development-keyboard-input/
 var Key = require("./Modules/Input").Key;
 var Mouse = require("./Modules/Input").Mouse;
+var ResourceManager = require("./Modules/ResourceManager");
+var TileManager = require("./Modules/TileManager");
+var Tile = require("./Modules/Tile");
+var WorldBuilder = require("./Modules/WorldBuilder");
+var Camera = require("./Modules/Camera");
+var Player = require("./Modules/Player");
+
+//http://nokarma.org/2011/02/27/javascript-game-development-keyboard-input/
 window.addEventListener('keyup', function(event)
 {
     Key.onKeyup(event);
@@ -18,7 +25,6 @@ window.addEventListener('mousemove', function(evt) {
 }, false);
 
 
-var ResourceManager = require("./Modules/ResourceManager");
 resourceManager = new ResourceManager();
 
 var DependencyInjector = function()
@@ -41,18 +47,7 @@ var DependencyInjector = function()
     }
 }
 
-var TileManager = require("./Modules/TileManager");
 var tileManager = new TileManager();
-var Tile = require("./Modules/Tile");
-
-
-var WorldBuilder = require("./Modules/WorldBuilder");
-var Camera = require("./Modules/Camera");
-
-
-
-var Player = require("./Modules/Player");
-
 
 
 //Base Game Class.  Call Init, Render, and Update as needed.  
