@@ -211,8 +211,8 @@ var HumanoidFactory = function() {
         x: -7,
         y: 0
     };
-    handItems.zindex = 1;
-    rightArm.addChild(rightArm2)
+    handItem.zindex = 1;
+    rightArm.addChild(handItem)
 
     var leftArm = new Bone();
     leftArm.length = 25;
