@@ -39,10 +39,23 @@ var Bone = function() {
 }
 
 Bone.prototype.flip = function(flip) {
-  for (var i = 0; i < this.children.length; i++) {
-      this.children[i].flip(flip)
+  if (this.flipped !== flip) {
+    this.flipped = flip
+    this.zindex = this.zindex * -1
+    for (var i = 0; i < this.children.length; i++) {
+        this.children[i].flip(flip)
+    }
+    this.resortChildren()
   }
-  this.flipped = flip
+}
+
+Bone.prototype.resortChildren = function() {
+  this.children.sort(function(a, b) {
+      return -(a.zindex - b.zindex)
+  });
+  for (var i = 0; i < this.children.length; i++) {
+      this.children[i].resortChildren()
+  }
 }
 
 Bone.prototype.addChild = function(child) {
@@ -73,7 +86,7 @@ Bone.prototype.update = function() {
     if (this.parent != null) {
         this.angle = this.localAngle + this.parent.angle ;
         //Do this to preserve the angle for animation purposes since angle will get set via
-        //data from a file.  
+        //data from a file.
         var worldAngle = this.angle;
         if (this.flipped) {
           worldAngle = 180 - this.angle;
@@ -184,21 +197,21 @@ var HumanoidFactory = function() {
     rightArm.zindex = 1;
     root.addChild(rightArm);
 
-    var rightArm2 = new Bone();
-    rightArm2.length = 25;
-    rightArm2.localAngle = 90;
-    rightArm2.name = "rightArm2";
-    rightArm2.imageHeight = 66;
-    rightArm2.imageWidth = 28;
-    rightArm2.imageLocation = {
+    var handItem = new Bone();
+    handItem.length = 25;
+    handItem.localAngle = 90;
+    handItem.name = "rightArm2";
+    handItem.imageHeight = 66;
+    handItem.imageWidth = 28;
+    handItem.imageLocation = {
         x: 158,
         y: 401
     };
-    rightArm2.imageOffset = {
+    handItem.imageOffset = {
         x: -7,
         y: 0
     };
-    rightArm2.zindex = 1;
+    handItems.zindex = 1;
     rightArm.addChild(rightArm2)
 
     var leftArm = new Bone();
@@ -215,7 +228,7 @@ var HumanoidFactory = function() {
         x: -7,
         y: 0
     };
-    leftArm.zindex = -1;
+    leftArm.zindex = -2;
     root.addChild(leftArm);
 
     var leftLeg = new Bone();

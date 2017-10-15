@@ -48,16 +48,6 @@ var DependencyInjector = function()
 }
 
 var tileManager = new TileManager();
-<<<<<<< HEAD
-var Tile = require("./Modules/Tile");
-
-
-var WorldBuilder = require("./Modules/WorldBuilder");
-var Camera = require("./Modules/Camera");
-
-
-
-var Player = require("./Modules/Player");
 
 var Bone = require("./Modules/Skeleton").Bone;
 
@@ -68,8 +58,6 @@ humanoid = Factory();
 humanoid.localPosition = {x:200,y:300};
 
 humanoidAnimator = new Animator(humanoid);
-=======
->>>>>>> 33d7026d9a91e37c665e6e2827cd6653f2495394
 
 
 //Base Game Class.  Call Init, Render, and Update as needed.
