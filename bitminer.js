@@ -36,7 +36,7 @@ var DependencyInjector = function()
         {
             list [element] = self.dependencies[element];
         });
-        
+
         return list;
     }
 }
@@ -53,9 +53,18 @@ var Camera = require("./Modules/Camera");
 
 var Player = require("./Modules/Player");
 
+var Bone = require("./Modules/Skeleton").Bone;
+
+var Factory = require("./Modules/Skeleton").HumanoidFactory;
+var Animator = require("./Modules/Animator");
+
+humanoid = Factory();
+humanoid.localPosition = {x:200,y:300};
+
+humanoidAnimator = new Animator(humanoid);
 
 
-//Base Game Class.  Call Init, Render, and Update as needed.  
+//Base Game Class.  Call Init, Render, and Update as needed.
 var Game = {
     stopMain: null,
     lastRender: 0,
@@ -76,7 +85,7 @@ var Game = {
         //Randomly create a world
         console.log("create world");
         worldBuilder = new WorldBuilder(tileManager);
-        worldBuilder.generate(1000, 10);
+        worldBuilder.generate(10, 10);
 
         this.player.init();
         tileManager.setCamera(this.player.camera);
@@ -86,11 +95,17 @@ var Game = {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         tileManager.draw();
         this.player.draw();
+
+        humanoid.draw();
     },
     update: function()
     {
         this.player.update();
         tileManager.update();
+
+        humanoidAnimator.animate()
+        humanoid.update();
+
     }
 
 

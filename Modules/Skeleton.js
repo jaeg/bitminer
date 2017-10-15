@@ -18,6 +18,7 @@ var Bone = function() {
         x: 0,
         y: 0
     };
+    this.flipped = 0;
     this.localAngle = 0;
     this.angle = 0;
     this.length = 0;
@@ -35,6 +36,13 @@ var Bone = function() {
         x: 0,
         y: 0
     };
+}
+
+Bone.prototype.flip = function(flip) {
+  for (var i = 0; i < this.children.length; i++) {
+      this.children[i].flip(flip)
+  }
+  this.flipped = flip
 }
 
 Bone.prototype.addChild = function(child) {
@@ -63,9 +71,16 @@ Bone.prototype.update = function() {
         this.localAngle += 360;
     }
     if (this.parent != null) {
-        this.angle = this.localAngle + this.parent.angle;
-        this.position.x = lengthDir_x(this.length, this.angle) + this.parent.position.x;
-        this.position.y = lengthDir_y(this.length, this.angle) + this.parent.position.y;
+        this.angle = this.localAngle + this.parent.angle ;
+        //Do this to preserve the angle for animation purposes since angle will get set via
+        //data from a file.  
+        var worldAngle = this.angle;
+        if (this.flipped) {
+          worldAngle = 180 - this.angle;
+        }
+
+        this.position.x = lengthDir_x(this.length, worldAngle) + this.parent.position.x;
+        this.position.y = lengthDir_y(this.length, worldAngle) + this.parent.position.y;
     } else {
         this.angle = this.localAngle;
         this.position = this.localPosition
@@ -98,6 +113,9 @@ Bone.prototype.drawImage = function() {
         var spriteSheet = resourceManager.getResource(this.image);
         ctx.save();
         ctx.translate(this.parent.position.x, this.parent.position.y);
+        if (this.flipped) {
+          ctx.scale(-1,1);
+        }
         ctx.rotate((this.angle - 90) * Math.PI / 180);
         ctx.drawImage(spriteSheet, this.imageLocation.x, this.imageLocation.y, this.imageWidth, this.imageHeight, this.imageOffset.x, this.imageOffset.y, this.imageWidth / 2, this.imageHeight / 2);
         ctx.restore();
@@ -166,6 +184,23 @@ var HumanoidFactory = function() {
     rightArm.zindex = 1;
     root.addChild(rightArm);
 
+    var rightArm2 = new Bone();
+    rightArm2.length = 25;
+    rightArm2.localAngle = 90;
+    rightArm2.name = "rightArm2";
+    rightArm2.imageHeight = 66;
+    rightArm2.imageWidth = 28;
+    rightArm2.imageLocation = {
+        x: 158,
+        y: 401
+    };
+    rightArm2.imageOffset = {
+        x: -7,
+        y: 0
+    };
+    rightArm2.zindex = 1;
+    rightArm.addChild(rightArm2)
+
     var leftArm = new Bone();
     leftArm.length = 25;
     leftArm.localAngle = 90;
@@ -197,7 +232,7 @@ var HumanoidFactory = function() {
         x: -7,
         y: 0
     };
-    leftLeg.zindex = -1;
+    leftLeg.zindex = 1;
     body.addChild(leftLeg);
 
     var rightLeg = new Bone();

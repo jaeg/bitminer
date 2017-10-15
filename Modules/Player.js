@@ -72,9 +72,11 @@ Player.prototype.draw = function() {
 };
 Player.prototype.moveLeft = function() {
     this.xspeed = -.3;
+    humanoid.flip(false);
 };
 Player.prototype.moveRight = function() {
     this.xspeed = .3;
+    humanoid.flip(true)
 };
 Player.prototype.moveUp = function() {
     this.yspeed = -.3

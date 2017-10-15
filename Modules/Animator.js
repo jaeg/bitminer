@@ -8,7 +8,7 @@ Animator.prototype.animate = function() {
     this.skeleton.getChild("body").getChild("leftLeg").localAngle += Math.cos(this.tick) * 10;
     this.skeleton.getChild("body").getChild("rightLeg").localAngle += -Math.cos(this.tick) * 10;
 
-    this.skeleton.getChild("leftArm").localAngle += -Math.cos(this.tick) * 10;
+    this.skeleton.getChild("leftArm").localAngle = 189//+= -Math.cos(this.tick) * 10;
     this.skeleton.getChild("rightArm").localAngle += Math.cos(this.tick) * 10;
 
     this.skeleton.getChild("head").localAngle += Math.cos(this.tick);
